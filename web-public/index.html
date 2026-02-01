@@ -1,0 +1,52 @@
+<head>
+   <meta charset="UTF-8">
+   <link href="docker-registry-ui.css" rel="stylesheet" type="text/css">
+   <link href="custom.css" rel="stylesheet" type="text/css">
+
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+   <meta property="og:site_name" content="Docker Registries">
+   
+   <title>Docker Registries</title>
+</head>
+<body style="--primary-text: #98a8bd; --neutral-text: #6d7fab; --background: #22272e; --hover-background: #343a4b; --accent-text: #5c88ff; --header-text: #ffffff; --header-accent-text: #7ea1ff; --header-background: #333a45; --footer-text: #ffffff; --footer-neutral-text: #98afcf; --footer-background: #344251;">
+  <docker-registry-ui docker-registry-ui-title="" registry-url="" name="Docker Registry Proxies" pull-url="" show-content-digest="true" show-tag-history="" is-image-remove-activated="true" catalog-elements-limit="1000" single-registry="true" default-registries="" read-only-registries="" show-catalog-nb-tags="true" history-custom-labels="" use-control-cache-header="" taglist-order="" catalog-default-expanded="" catalog-min-branches="1" catalog-max-branches="1" is-registry-secured="false" theme="" theme-primary-text="" theme-neutral-text="" theme-background="" theme-hover-background="" theme-accent-text="" theme-header-accent-text="" theme-header-text="" theme-header-background="" theme-footer-text="" theme-footer-neutral-text="" theme-footer-background="" tags-per-page="100" enable-version-notification="">
+    <header>
+      <material-navbar role="toolbar">
+        <div class="nav-wrapper">
+          <span class="logo">
+            <span><a href="https://registry.np.dotnot.pl/">Docker Registries</a></span>
+          </span>
+          <div class="menu">
+          </div>
+        </div>
+      </material-navbar>
+    </header>
+
+    <main>
+      <!-- <catalog registry-url="https://registry.np.dotnot.pl/ghcr.io" registry-name="Docker Registry Proxy (ghcr.io)" catalog-elements-limit="1000" show-catalog-nb-tags="true" catalog-default-expanded="false" catalog-min-branches="1" catalog-max-branches="1" is-registry-secured="false">
+        <material-card ref="catalog-tag" class="catalog header">
+          <div class="material-card-title-action">
+            <h2>Docker Registry Proxies:</h2>
+          </div>
+        </material-card> -->
+        <div class="listing" id="registryListing">
+          Loading registries...
+        </div>
+      </catalog>
+
+      <registry-authentication></registry-authentication>
+      <material-snackbar></material-snackbar>
+    </main>
+
+    <footer>
+      <material-footer mini="true">
+        <div>
+          <!-- <a class="material-footer-logo" href="https://joxit.github.io/docker-registry-ui/">Docker Registry UI 2.6.0-83c33e9d05</a> -->
+        </div>
+      </material-footer>
+    </footer>
+
+  </docker-registry-ui>
+</body>
+<script src="docker-registry-ui.js"></script>
+</html>

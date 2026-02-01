@@ -1,0 +1,28 @@
+material-card.list {
+ height: 40px;
+}
+
+docker-registry-ui,[is="docker-registry-ui"]{
+     display: flex;
+     flex-direction: column;
+     min-height: 100vh;
+}
+docker-registry-ui main,[is="docker-registry-ui"] main{
+     flex-grow: 1;
+     margin: 0.5em 0;
+}
+
+docker-registry-ui material-navbar,[is="docker-registry-ui"] material-navbar{
+     height: 64px;
+     color: var(--header-text);
+     background-color: var(--header-background);
+}
+
+docker-registry-ui material-navbar .nav-wrapper .logo a,[is="docker-registry-ui"] material-navbar .nav-wrapper .logo a{
+     text-decoration: none;
+}
+
+docker-registry-ui material-footer,[is="docker-registry-ui"] material-footer{
+     color: var(--footer-neutral-text);
+     background-color: var(--footer-background);
+}
