@@ -1,0 +1,45 @@
+common:
+  version: 0.1
+  log:
+    fields:
+      service: registry
+      environment: development
+    level: info
+  storage:
+    delete:
+      enabled: true
+    cache:
+      blobdescriptor: inmemory
+    filesystem:
+      rootdirectory: /var/lib/registry
+    tag:
+      concurrencylimit: 5
+    maintenance:
+      uploadpurging:
+        enabled: true
+        age: 168h
+        interval: 24h
+        dryrun: false
+  http:
+    addr: :5000
+  health:
+    storagedriver:
+      enabled: true
+      interval: 10s
+      threshold: 3
+
+registries:
+  dockerio:
+    proxy:
+      remoteurl: https://registry-1.docker.io
+      username: karolkozlowski
+      password: ***REMOVED***
+  ghcr:
+    proxy:
+      remoteurl: https://ghcr.io
+  lscr:
+    proxy:
+      remoteurl: https://lscr.io
+  quay:
+    proxy:
+      remoteurl: https://quay.io
