@@ -3,23 +3,25 @@ TOOLS := scripts/config_tools.py
 
 .DELETE_ON_ERROR:
 
-SRC_DIR := src
-COMMON := $(SRC_DIR)/common.yml
-CUSTOM_DIR := $(SRC_DIR)/custom
 CONFIG_FILE := config.yml
 CONFIG_DIR := config
-TARGETS := $(addprefix $(CONFIG_DIR)/,dockerio.yml ghcr.yml lscr.yml quay.yml)
+TARGETS := $(addprefix $(CONFIG_DIR)/,$(addsuffix .yml,$(shell $(PYTHON) $(TOOLS) list-registries $(CONFIG_FILE))))
 REGISTRIES_DIR := web-public/registries
 DOMAIN_PARTS ?= 2
+COMPOSE_TEMPLATE := docker-compose.yml.j2
+COMPOSE_OUTPUT := docker-compose.yml
 
 all: $(TARGETS) registries
+
+compose: $(COMPOSE_TEMPLATE) $(CONFIG_FILE) $(TOOLS)
+	$(PYTHON) $(TOOLS) render-compose $(COMPOSE_TEMPLATE) $(CONFIG_FILE) -o $(COMPOSE_OUTPUT)
 
 $(CONFIG_DIR)/%.yml: $(CONFIG_FILE) $(TOOLS)
 	@mkdir -p $(CONFIG_DIR)
 	$(PYTHON) $(TOOLS) merge $(CONFIG_FILE) $* -o $@
 
 clean:
-	rm -f $(TARGETS)
+	rm -f $(TARGETS) $(COMPOSE_OUTPUT)
 
 registries:
 	@mkdir -p $(REGISTRIES_DIR)
@@ -28,4 +30,4 @@ registries:
 		mkdir -p "$(REGISTRIES_DIR)/$$name"; \
 	done
 
-.PHONY: all clean registries
+.PHONY: all clean registries compose

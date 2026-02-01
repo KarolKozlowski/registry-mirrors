@@ -1,0 +1,93 @@
+{#
+  Expected variables (with defaults):
+  - config_file: path to combined config.yml (default: "config.yml")
+  - registry_image: default "registry:3"
+  - ui_image: default "joxit/docker-registry-ui:main"
+  - tz: default "Europe/Warsaw"
+  - otel_traces_exporter: default "none"
+  - data_root: default "/share/db/registry"
+  - config_root: default "/share/www/registry/config"
+  - registry_port_base: default 20122
+  - ui_port_base: default 20132
+  - port_step: default 1
+  - registry_title_prefix: default "Docker Registry Proxy"
+#}
+{% set _config_file = config_file | default('config.yml') %}
+{% set _cfg_root = cfg_root | default({}) %}
+{% set _registries = _cfg_root.registries | default({}) %}
+{% set _registry_image = registry_image | default('registry:3') %}
+{% set _ui_image = ui_image | default('joxit/docker-registry-ui:main') %}
+{% set _tz = tz | default('Europe/Warsaw') %}
+{% set _otel = otel_traces_exporter | default('none') %}
+{% set _data_root = data_root | default('/share/db/registry') %}
+{% set _config_root = config_root | default('/share/www/registry/config') %}
+{% set _registry_port_base = registry_port_base | default(20122) %}
+{% set _ui_port_base = ui_port_base | default(20132) %}
+{% set _port_step = port_step | default(1) %}
+{% set _registry_title_prefix = registry_title_prefix | default('Docker Registry Proxy') %}
+
+services:
+
+  website:
+    container_name: registry-web
+    image: joseluisq/static-web-server:latest
+    labels:
+      wud.tag.include: latest
+      wud.watch.digest: true
+      # wud.display.icon: si:
+    ports:
+      - 20120:80
+    restart: unless-stopped
+    environment:
+      # Note: those envs are customizable but also optional
+      - SERVER_ROOT=/var/public
+      - SERVER_CONFIG_FILE=/etc/sws.toml
+    volumes:
+      - /share/www/registry/web-public:/var/public
+      - /share/www/registry/web-config/sws.toml:/etc/sws.toml
+
+{% for name, cfg in (_registries | dictsort) %}
+  {% set remoteurl = cfg.proxy.remoteurl %}
+  {% set host = remoteurl | regex_replace('^https?://', '') | regex_replace('/.*', '') | regex_replace(':.*', '') %}
+  {% set idx = loop.index0 %}
+  registry-{{ name }}:
+    container_name: registry-{{ name }}
+    restart: unless-stopped
+    image: {{ _registry_image }}
+    labels:
+      wud.tag.include: 3
+      wud.watch.digest: true
+      wud.display.icon: si:opencontainersinitiative
+    ports:
+      - 127.0.0.1:{{ _registry_port_base + (idx * _port_step) }}:5000
+    environment:
+      TZ: {{ _tz }}
+      OTEL_TRACES_EXPORTER: {{ _otel }}
+    volumes:
+      - {{ _data_root }}/data-{{ name }}:/var/lib/registry
+      - {{ _config_root }}/{{ name }}.yml:/etc/distribution/config.yml
+
+  registry-{{ name }}-ui:
+    container_name: registry-{{ name }}-ui
+    image: {{ _ui_image }}
+    labels:
+      wud.tag.include: main
+      wud.watch.digest: true
+      # wud.display.icon: si:
+    restart: unless-stopped
+    ports:
+      - {{ _ui_port_base + (idx * _port_step) }}:80
+    environment:
+      - SINGLE_REGISTRY=true
+      - REGISTRY_TITLE={{ _registry_title_prefix }} ({{ host }})
+      - DELETE_IMAGES=true
+      - SHOW_CONTENT_DIGEST=true
+      - NGINX_PROXY_PASS_URL=http://registry-{{ name }}:5000
+      - SHOW_CATALOG_NB_TAGS=true
+      - CATALOG_MIN_BRANCHES=1
+      - CATALOG_MAX_BRANCHES=1
+      - TAGLIST_PAGE_SIZE=100
+      - REGISTRY_SECURED=false
+      - CATALOG_ELEMENTS_LIMIT=1000
+
+{% endfor %}
