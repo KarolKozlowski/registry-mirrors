@@ -32,8 +32,6 @@ registries:
   dockerio:
     proxy:
       remoteurl: https://registry-1.docker.io
-      username: karolkozlowski
-      password: ***REMOVED***
   ghcr:
     proxy:
       remoteurl: https://ghcr.io

@@ -47,12 +47,30 @@ def load_config(path: str) -> dict[str, Any]:
     return {"common": common, "registries": registries}
 
 
+def load_secrets(path: str | None) -> dict[str, Any]:
+    if not path:
+        return {}
+    data = load_yaml(path)
+    if not data:
+        return {}
+    if not isinstance(data, dict):
+        raise ValueError("Secrets must be a mapping")
+    registries = data.get("registries")
+    if registries is None:
+        return {}
+    if not isinstance(registries, dict):
+        raise ValueError("Secrets registries must be a mapping")
+    return registries
+
+
 def cmd_merge(args: argparse.Namespace) -> int:
     data = load_config(args.config)
     registry = data["registries"].get(args.registry)
     if not isinstance(registry, dict):
         raise ValueError(f"Registry '{args.registry}' not found")
-    merged = deep_merge(data["common"], registry)
+    secrets = load_secrets(args.secrets)
+    merged_registry = deep_merge(registry, secrets.get(args.registry, {}))
+    merged = deep_merge(data["common"], merged_registry)
     dump_yaml(merged, args.output)
     return 0
 
@@ -142,6 +160,7 @@ def build_parser() -> argparse.ArgumentParser:
     merge = sub.add_parser("merge", help="Merge common config with a registry override")
     merge.add_argument("config", help="Path to config.yml")
     merge.add_argument("registry", help="Registry key")
+    merge.add_argument("--secrets", help="Path to secrets.yml", default=None)
     merge.add_argument("-o", "--output", required=True, help="Output file")
     merge.set_defaults(func=cmd_merge)
 

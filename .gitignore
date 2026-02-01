@@ -1,2 +1,4 @@
 # Generated merged configs
 /config/*.yml
+/docker-compose.yml
+/secrets.yml

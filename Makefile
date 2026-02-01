@@ -4,6 +4,7 @@ TOOLS := scripts/config_tools.py
 .DELETE_ON_ERROR:
 
 CONFIG_FILE := config.yml
+SECRETS_FILE := secrets.yml
 CONFIG_DIR := config
 TARGETS := $(addprefix $(CONFIG_DIR)/,$(addsuffix .yml,$(shell $(PYTHON) $(TOOLS) list-registries $(CONFIG_FILE))))
 REGISTRIES_DIR := web-public/registries
@@ -18,7 +19,7 @@ compose: $(COMPOSE_TEMPLATE) $(CONFIG_FILE) $(TOOLS)
 
 $(CONFIG_DIR)/%.yml: $(CONFIG_FILE) $(TOOLS)
 	@mkdir -p $(CONFIG_DIR)
-	$(PYTHON) $(TOOLS) merge $(CONFIG_FILE) $* -o $@
+	$(PYTHON) $(TOOLS) merge $(CONFIG_FILE) $* -o $@ $(if $(wildcard $(SECRETS_FILE)),--secrets $(SECRETS_FILE))
 
 clean:
 	rm -f $(TARGETS) $(COMPOSE_OUTPUT)
