@@ -17,6 +17,7 @@ This folder builds registry configs and a docker-compose file from a combined co
 Sources:
 
 - Combined config: `config.yml`
+- Secrets (local): `secrets.yml` (copy from `secrets.yml.example`)
 - Compose template: `docker-compose.yml.j2`
 
 Generated outputs are `config/*.yml` files and `docker-compose.yml`.
