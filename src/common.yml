@@ -1,9 +1,11 @@
 version: 0.1
+
 log:
   fields:
     service: registry
     environment: development
   level: info
+
 storage:
   delete:
     enabled: true
@@ -13,12 +15,18 @@ storage:
     rootdirectory: /var/lib/registry
   tag:
     concurrencylimit: 5
+  maintenance:
+    uploadpurging:
+      enabled: true
+      age: 168h
+      interval: 24h
+      dryrun: false
+
 http:
   addr: :5000
+
 health:
   storagedriver:
     enabled: true
     interval: 10s
     threshold: 3
-proxy:
-  remoteurl: https://lscr.io

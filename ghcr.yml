@@ -1,36 +1,30 @@
 version: 0.1
-
 log:
-  level: debug
   fields:
     service: registry
     environment: development
-
+  level: info
 storage:
   delete:
     enabled: true
   cache:
     blobdescriptor: inmemory
   filesystem:
-     rootdirectory: /var/lib/registry
+    rootdirectory: /var/lib/registry
   tag:
     concurrencylimit: 5
-
   maintenance:
     uploadpurging:
       enabled: true
       age: 168h
       interval: 24h
       dryrun: false
-
 http:
-    addr: :5000
-
-proxy:
-  remoteurl: https://ghcr.io
-
+  addr: :5000
 health:
   storagedriver:
     enabled: true
     interval: 10s
     threshold: 3
+proxy:
+  remoteurl: https://ghcr.io

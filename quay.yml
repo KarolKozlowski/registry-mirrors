@@ -1,29 +1,24 @@
 version: 0.1
-
 log:
-  level: debug
   fields:
     service: registry
     environment: development
-
+  level: info
 storage:
-    delete:
-      enabled: true
-    cache:
-        blobdescriptor: inmemory
-    filesystem:
-        rootdirectory: /var/lib/registry
-    tag:
-      concurrencylimit: 5
-
+  delete:
+    enabled: true
+  cache:
+    blobdescriptor: inmemory
+  filesystem:
+    rootdirectory: /var/lib/registry
+  tag:
+    concurrencylimit: 5
 http:
-    addr: :5000
-
-proxy:
-  remoteurl: https://quay.io
-
+  addr: :5000
 health:
   storagedriver:
     enabled: true
     interval: 10s
     threshold: 3
+proxy:
+  remoteurl: https://quay.io
